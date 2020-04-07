@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block logout %}
+  <input class="btn btn-secondary" title="Logout" type="button" id="logout" value="Выйти">
+{% endblock %}
+
+{% block models_type %}
+  {% for model in all_models %}
+    <a href="{{ '/admin?model=%s'%model[1]|urlencode }}">{{ model[0] }}</a><br>
+  {% endfor %}
+    <a href="">заглушка1</a><br>
+    <a href="">заглушка2</a><br>
+    <a href="">заглушка3</a><br>
+{% endblock %}
+
+{% block content %}
+<div class="section-container">
+    <div class="container">
+        <div class="row" id="beer_container">
+        </div>
+
+
+        <link href="{{ url_for('css', path='./pagination.css') }}" rel="stylesheet">
+        <div class="center">
+            <div class="pagination" id="pagination">
+                <a class="get_beer_btn disabled" id="prev_link">Previous</a>
+                <a class="get_beer_btn disabled" id="next_link">Next</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+    
+{% endblock%}
+
+{% block pagination %}
+{% endblock %}
+
+{% block footer %}
+<script type="text/javascript" src="{{ url_for('js', path='./get_beer.js') }}"></script>
+{% endblock %}
