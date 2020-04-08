@@ -1,0 +1,8 @@
+databases:
+  - name: blog
+    collections:
+     - useres
+     - posts
+  - name: another_blog
+    collections:
+     - articles

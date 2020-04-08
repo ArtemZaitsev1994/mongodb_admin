@@ -9,7 +9,7 @@ $(document).ready(function(){
     function check_height(e) {
         // Если появляется скролл и его ширина больше клиентской → увеличиваем ширину клиента
         if (this.scrollHeight > this.clientHeight) {
-            this.style.height = this.scrollHeight + 'px';
+            this.style.height = this.scrollHeight + 5 + 'px';
         }
     }
 
@@ -27,7 +27,21 @@ $(document).ready(function(){
         })
     }
 
+    function save_new_item() {
+        data = JSON.parse($(`#new_item_json`).val())
+        $.ajax({
+            dataType: 'json',
+            url: '/beerblog/save_item',
+            type: 'POST',
+            data: JSON.stringify(data),
+            success: function(data) {
+                console.log(data)
+            }
+        })
 
+    }
+
+    $('#save_new_item').on('click', save_new_item)
 
     showBeer1 = () => {
         $.ajax({
@@ -43,22 +57,16 @@ $(document).ready(function(){
 
                         <form role="form" style="width:100%">
 
-                            <div class="form-group">
-                                form group 
-                            </div>
-
                             <div class="form-group row">
 
                                 <textarea id="${beer['_id']}" class="json_items" style="width:7000px">${JSON.stringify(beer, undefined, 2)}</textarea>
                             </div>
 
-                            <div class="form-group">
-
-
-                            </div>
 
                             <input class="btn btn-primary submit" title="Сохранить" type="button" data-id="${beer['_id']}" value="Сохранить">
                             <input class="btn btn-danger delete" title="Удалить" type="button" data-id="${beer['_id']}" value="Удалить">
+                            <div class="form-group"></div>
+                            <hr>
                         </form>`);
                 }
 

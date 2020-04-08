@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Any
 
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
@@ -48,3 +48,8 @@ async def save_beer(request: Request, beer: Beer):
     if beer.get('item_id'):
         return await request.app.mongo['beer'].update_item(beer)
     return await request.app.mongo['beer'].save_item(beer)
+
+
+@router.post('/save_item', name='save_item')
+async def save_item(request: Request, **kwargs: Dict):
+    return await request.app.mongo['beer'].save_item(kwargs)
