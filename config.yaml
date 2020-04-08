@@ -1,0 +1,16 @@
+databases:
+  - name: blog
+    collections:
+     - useres
+     - posts
+    basemodel: from_base
+    query:
+      name: vasya
+  - name: another_blog
+    collections:
+     - articles
+    basemodel: from_config
+    model:
+      name: artem
+      age: 14
+      sadf: qwe

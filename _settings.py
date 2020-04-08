@@ -1,5 +1,7 @@
 import os
 
+import trafaret as T
+from trafaret_config import read_and_validate
 from fastapi import FastAPI
 from envparse import env
 
@@ -20,7 +22,20 @@ else:
 
 
 def setup_app(app: FastAPI):
-    pass
+    TRAFARET = T.Dict({
+        T.Key('databases'): T.List(
+            T.Dict({
+                'name': T.String(),
+                'collections': T.List(T.String()),
+                'basemodel': T.String(),
+                T.Key('query', optional=True): T.Dict({T.Key('name', optional=True): T.String()}),
+                T.Key('model', optional=True): T.Any()
+            })
+        )
+    })
+
+    config = read_and_validate('config.yaml', TRAFARET)
+    print(config)
     # BASEDIR = os.path.dirname(os.path.realpath(__file__))
     # PHOTO_PATH = os.path.join(BASEDIR, 'static/photo/')
 
