@@ -1,16 +1,45 @@
 databases:
-  - name: blog
+
+  - name: beerblog
     collections:
-     - useres
-     - posts
-    basemodel: from_base
-    query:
-      name: vasya
-  - name: another_blog
+     - name: beerblog_bb_beer
+       fields:
+        - name
+        - rate
+        - manufacturer
+        - gravity
+        - ibu
+        - review
+        - others
+        - photos
+     - name: beerblog_vodka
+       fields:
+        - name
+        - rate
+        - manufacturer
+        - gravity
+        - ibu
+        - review
+        - others
+        - photos
+     - name: beerblog_whisky
+       fields:
+        - name
+        - rate
+        - manufacturer
+        - gravity
+        - ibu
+        - review
+        - others
+        - photos
+
+
+     - name: post
+       fields:
+        - name
+
+  - name: another_site
     collections:
-     - articles
-    basemodel: from_config
-    model:
-      name: artem
-      age: 14
-      sadf: qwe
+     - name: articles
+       fields:
+        - name

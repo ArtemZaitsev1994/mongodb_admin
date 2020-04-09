@@ -26,16 +26,18 @@ def setup_app(app: FastAPI):
         T.Key('databases'): T.List(
             T.Dict({
                 'name': T.String(),
-                'collections': T.List(T.String()),
-                'basemodel': T.String(),
-                T.Key('query', optional=True): T.Dict({T.Key('name', optional=True): T.String()}),
-                T.Key('model', optional=True): T.Any()
+                'collections': T.List(
+                    T.Dict({
+                        'name': T.String(),
+                        'fields': T.List(T.String),
+                    })
+                )
             })
         )
     })
 
     config = read_and_validate('config.yaml', TRAFARET)
-    print(config)
+    app.config = config
     # BASEDIR = os.path.dirname(os.path.realpath(__file__))
     # PHOTO_PATH = os.path.join(BASEDIR, 'static/photo/')
 

@@ -6,9 +6,9 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 
 class BaseModel:
 
-    def __init__(self, db: AsyncIOMotorDatabase, **kw):
+    def __init__(self, db: AsyncIOMotorDatabase, collection: str, **kw):
         self.db = db
-        self.collection = NotImplementedError
+        self.collection = collection
 
     async def get_all(self, page=1, per_page=9) -> List[Dict[str, Any]]:
         all_qs = self.collection.find({})

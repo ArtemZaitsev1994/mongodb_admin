@@ -19,6 +19,10 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="{{ '/game'|urlencode }}">Подключить базу</a>
                     </li>
+
+                    <li>
+                        <input type="text" class="form-control ml-3" placeholder="Поиск по базе"/>
+                    </li>
                     <li class="nav-item ml-md-auto">
                         <a class="nav-link disabled" href="{{ '/contacts'|urlencode }}">Контакты</a>
                     </li>
@@ -33,16 +37,30 @@
         <div class="row mt-3">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-md-2 col-sm-0">
+                        <div class="col-md-1 col-sm-0"></div>
+                        <div class="col-md-2 col-sm-0 mt-5">
                             {% block models_type %}
+                                <ul class="nav-item">
+                                {% for db in dbs %}
+                                      <a href="#" class="nav-link databases" data-database="{{db}}">{{ db }}</a>
+                                      <ul id={{db}} style="display: none">
+                                        {% for collection in dbs[db] %}
+                                            <li class="collections" data-db="{{db}}" data-collection="{{collection}}" class="nav-item"><a class="nav-link" href="">{{ collection }}</a></li>
+                                        {% endfor %}
+                                      </ul>
+                                {% endfor %}
+                                    </ul>
                             {% endblock %}
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-6">
                             {% block content %}
                             {% endblock %}
                         </div>
                         <div class="col-md-2 col-sm-0">
+                            {% block fields %}
+                            {% endblock %}
                         </div>
+                        <div class="col-md-1 col-sm-0"></div>
                     </div>
                 </div>
         </div>

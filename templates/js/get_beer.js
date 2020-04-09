@@ -41,9 +41,56 @@ $(document).ready(function(){
 
     }
 
-    $('#save_new_item').on('click', save_new_item)
+    function get_collection(e) {
+        e.preventDefault()
+        data = {
+            'db': this.dataset.db,
+            'collection': this.dataset.collection
+        }
+        $.ajax({
+            dataType: 'json',
+            url: '/get_data',
+            type: 'POST',
+            data: JSON.stringify(data),
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                $('#fields').empty()
+                for (let li of data.fields){
+                    $('#fields').append(`<button id=field_${li} class="field btn btn-outline-primary list-group-item">${li}</button>`)
+                }
+                $('.field').on('click', choose_field)
+            }
+        });
+    }
 
-    showBeer1 = () => {
+    function choose_field(e) {
+        elem = $(`#${this.id}`)
+        if (elem.hasClass('btn-outline-primary')) {
+            elem.removeClass('btn-outline-primary')
+            elem.addClass('btn-primary')
+            elem.css('background-color', '#007bff')
+        } else {
+            elem.removeClass('btn-primary')
+            elem.addClass('btn-outline-primary')
+            elem.css('background-color', '#fff')
+        }
+    }
+
+    function show_hide_collection(e) {
+        if ($(`#${this.dataset.database}`).css('display') == 'none') {
+            $(`#${this.dataset.database}`).css('display', 'block')
+        } else {
+            $(`#${this.dataset.database}`).css('display', 'none') 
+        }
+    }
+
+    $('#save_new_item').on('click', save_new_item)
+    $('.collections').on('click', get_collection)
+    $('.databases').on('click', show_hide_collection)
+
+
+    showBeer1 = (data) => {
         $.ajax({
             dataType: 'json',
             url: '/beerblog/get_beer?page=1',
@@ -96,7 +143,7 @@ $(document).ready(function(){
 
 
 
-    showBeer1()
+    // showBeer1()
 
     $('.get_beer_btn').on('click', function(e){
         e.preventDefault()
