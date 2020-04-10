@@ -2,27 +2,7 @@ databases:
 
   - name: beerblog
     collections:
-     - name: beerblog_bb_beer
-       fields:
-        - name
-        - rate
-        - manufacturer
-        - gravity
-        - ibu
-        - review
-        - others
-        - photos
-     - name: beerblog_vodka
-       fields:
-        - name
-        - rate
-        - manufacturer
-        - gravity
-        - ibu
-        - review
-        - others
-        - photos
-     - name: beerblog_whisky
+     - name: bb_beer
        fields:
         - name
         - rate
@@ -33,13 +13,15 @@ databases:
         - others
         - photos
 
-
-     - name: post
-       fields:
-        - name
-
-  - name: another_site
+  - name: quiz
     collections:
-     - name: articles
+     - name: admin
        fields:
-        - name
+        - login
+        - password
+     - name: quiz_questions
+       fields:
+        - text
+        - answer
+        - complexity
+        - category

@@ -14,8 +14,10 @@ def setup_mongo(app: FastAPI):
     for db in app.config['databases']:
         app.mongo[db['name']] = {}
         for collection in db['collections']:
-            print(collection['fields'])
+            db_instance = app.client[db['name']]
+            collection_instance = db_instance[collection['name']]
+
             app.mongo[db['name']][collection['name']] = (
-                BaseModel(app.client[db['name']], collection['name']),
+                BaseModel(db_instance, collection_instance),
                 collection['fields']
             )

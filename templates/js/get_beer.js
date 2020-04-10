@@ -12,6 +12,7 @@ $(document).ready(function(){
             this.style.height = this.scrollHeight + 5 + 'px';
         }
     }
+    $('.json_items').map(check_height)
 
     function send_data(e) {
         data = JSON.parse($(`#${this.dataset.id}`).val())
@@ -55,11 +56,54 @@ $(document).ready(function(){
             processData: false,
             contentType: false,
             success: function(data) {
+                console.log(data)
                 $('#fields').empty()
+                $('#items_container').empty()
                 for (let li of data.fields){
                     $('#fields').append(`<button id=field_${li} class="field btn btn-outline-primary list-group-item">${li}</button>`)
                 }
                 $('.field').on('click', choose_field)
+
+
+                for (item of data.items){
+                    console.log(item)
+                    $('#items_container').append(`
+
+
+                        <form role="form" style="width:100%">
+
+                            <div class="form-group row">
+
+                                <textarea id="${item['_id']}" class="json_items" style="width:7000px">${JSON.stringify(item, undefined, 2)}</textarea>
+                            </div>
+
+
+                            <input class="btn btn-primary submit" title="Сохранить" type="button" data-id="${item['_id']}" value="Сохранить">
+                            <input class="btn btn-danger delete" title="Удалить" type="button" data-id="${item['_id']}" value="Удалить">
+                            <div class="form-group"></div>
+                            <hr>
+                        </form>`);
+                }
+
+
+
+
+                pag = data.pagination
+                if (pag.page <= 1) {
+                    $('#prev_link').attr('class', 'disabled')
+                }
+                if (!pag.has_next) {
+                    $('#next_link').attr('class', 'disabled')
+                }
+                $('#prev_link').attr('page', pag.prev)
+                $('#next_link').attr('page', pag.next)
+
+                $('.json_items').map(check_height)
+
+                $('.json_items').on('input', check_height)
+
+                $('.submit').on('click', send_data)
+                $('.json_items').on('input', check_height)
             }
         });
     }
