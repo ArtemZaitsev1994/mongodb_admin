@@ -30,6 +30,7 @@ def setup_app(app: FastAPI):
                     T.Dict({
                         'name': T.String(),
                         'fields': T.List(T.String),
+                        T.Key('index_fields', optional=True): T.List(T.String),
                     })
                 )
             })

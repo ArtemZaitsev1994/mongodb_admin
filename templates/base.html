@@ -17,14 +17,14 @@
             <div class="col-lg-6 col-sm-12">
                 <ul class="nav nav-pills">
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ '/game'|urlencode }}">Подключить базу</a>
+                        <a class="nav-link active" href="{{ '/databases'|urlencode }}">Базы</a>
                     </li>
 
                     <li>
-                        <input type="text" class="form-control ml-3" placeholder="Поиск по базе"/>
+                        <input id="full_text" style="display: none" type="text" class="form-control ml-3" placeholder="Поиск по базе"/>
                     </li>
                     <li class="nav-item ml-md-auto">
-                        <a class="nav-link disabled" href="{{ '/contacts'|urlencode }}">Контакты</a>
+                        <a class="nav-link" href="{{ '/contacts'|urlencode }}">Контакты</a>
                     </li>
                     {% block logout %}
                     {% endblock %}

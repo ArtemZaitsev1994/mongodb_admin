@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
@@ -27,19 +27,39 @@ class DataIn(BaseModel):
     db: str
     collection: str
     page: int = 1
+    fields_filter: List = []
+    text: str = ''
 
 
 @router.post('/get_data', name='get_data')
 async def get_data(request: Request, data: DataIn):
     page = data.page
-    items, pagination = await request.app.mongo[data.db][data.collection][0].get_all(page=page)
+    query = {}
+
+    if data.fields_filter:
+        query = dict(
+            zip(
+                data.fields_filter, [
+                    {"$nin": ['', -1, None], "$exists": True}
+                    for x
+                    in data.fields_filter
+                ]
+            )
+        )
+
+    if data.text:
+        query['$text'] = {'$search': data.text}
+
+    items, pagination = await request.app.mongo[data.db][data.collection].db\
+        .get_all(query, page=page)
+
     for item in items:
         item['_id'] = str(item['_id'])
     pagination['prev_link'] = request.url_for('get_beer') + f'?page={page-1}'
     pagination['next_link'] = request.url_for('get_beer') + f'?page={page+1}'
 
     response = {
-        'fields': request.app.mongo[data.db][data.collection][1],
+        'fields': request.app.mongo[data.db][data.collection].fields,
         'items': items,
         'pagination': pagination,
     }
@@ -49,8 +69,8 @@ async def get_data(request: Request, data: DataIn):
 @router.post('/save_item', name='save_item')
 async def save_item(request: Request, item: Dict[str, Any]):
     if item.get('item_id'):
-        return await request.app.mongo[item['db']][item['collection']][0].update_item(item)
-    return await request.app.mongo[item['db']][item['collection']][0].save_item(item)
+        return await request.app.mongo[item['db']][item['collection']].db.update_item(item)
+    return await request.app.mongo[item['db']][item['collection']].db.save_item(item)
 
 
 # @router.post('/save_item', name='save_item')

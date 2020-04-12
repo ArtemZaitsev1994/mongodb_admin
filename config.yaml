@@ -12,6 +12,15 @@ databases:
         - review
         - others
         - photos
+       index_fields:
+        - name
+        - rate
+        - manufacturer
+        - gravity
+        - ibu
+        - review
+        - others
+
 
   - name: quiz
     collections:
@@ -21,6 +30,11 @@ databases:
         - password
      - name: quiz_questions
        fields:
+        - text
+        - answer
+        - complexity
+        - category
+       index_fields:
         - text
         - answer
         - complexity

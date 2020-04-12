@@ -4,14 +4,6 @@
   <input class="btn btn-secondary" title="Logout" type="button" id="logout" value="Выйти">
 {% endblock %}
 
-{% block models_type %}
-  {% for model in all_models %}
-    <a href="{{ '/admin?model=%s'%model[1]|urlencode }}">{{ model[0] }}</a><br>
-  {% endfor %}
-    <a href="">заглушка1</a><br>
-    <a href="">заглушка2</a><br>
-    <a href="">заглушка3</a><br>
-{% endblock %}
 
 {% block content %}
 <div class="section-container">
