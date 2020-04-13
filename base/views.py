@@ -3,6 +3,7 @@ from typing import Dict, Any, List
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+from pymongo import errors
 
 
 templates = Jinja2Templates(directory='templates')
@@ -31,8 +32,16 @@ class DataIn(BaseModel):
     text: str = ''
 
 
+class BaseResponse(BaseModel):
+    success: bool
+    message: str = ''
+    item_fields: List = None
+    items: List[Dict[str, Any]] = None
+    pagination: Dict[str, Any] = None
+
+
 @router.post('/get_data', name='get_data')
-async def get_data(request: Request, data: DataIn):
+async def get_data(request: Request, data: DataIn, response_model=BaseResponse):
     page = data.page
     query = {}
 
@@ -50,8 +59,15 @@ async def get_data(request: Request, data: DataIn):
     if data.text:
         query['$text'] = {'$search': data.text}
 
-    items, pagination = await request.app.mongo[data.db][data.collection].db\
-        .get_all(query, page=page)
+    try:
+        items, pagination = await request.app.mongo[data.db][data.collection].db\
+            .get_all(query, page=page)
+    except errors.OperationFailure:
+        response = {
+            'success': False,
+            'message': 'error accessing mongo',
+        }
+        return response
 
     for item in items:
         item['_id'] = str(item['_id'])
@@ -59,18 +75,50 @@ async def get_data(request: Request, data: DataIn):
     pagination['next_link'] = request.url_for('get_beer') + f'?page={page+1}'
 
     response = {
-        'fields': request.app.mongo[data.db][data.collection].fields,
+        'success': True,
+        'item_fields': request.app.mongo[data.db][data.collection].fields,
         'items': items,
         'pagination': pagination,
     }
     return response
 
 
-@router.post('/save_item', name='save_item')
+@router.post('/save_item', name='save_item', response_model=BaseResponse)
 async def save_item(request: Request, item: Dict[str, Any]):
     if item.get('item_id'):
-        return await request.app.mongo[item['db']][item['collection']].db.update_item(item)
-    return await request.app.mongo[item['db']][item['collection']].db.save_item(item)
+        success, message = await request.app.mongo[item['db']][item['collection']]\
+            .db.update_item(item)
+    else:
+        success, message = await request.app.mongo[item['db']][item['collection']]\
+            .db.save_item(item)
+
+    response = {
+        'success': success,
+        'message': message
+    }
+
+    return response
+
+
+@router.post('/remove_item', name='remove_item', response_model=BaseResponse)
+async def remove_item(request: Request, item: Dict[str, Any]):
+    if item.get('item_id'):
+        success, message = await request.app.mongo[item['db']][item['collection']]\
+            .db.remove_item(item)
+        response = {
+            'success': success,
+            'message': message
+        }
+    else:
+        response = {
+            'success': False,
+            'message': message
+        }
+
+    return response
+
+
+
 
 
 # @router.post('/save_item', name='save_item')

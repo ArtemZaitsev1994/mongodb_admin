@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -21,7 +20,7 @@
                     </li>
 
                     <li>
-                        <input id="full_text" style="display: none" type="text" class="form-control ml-3" placeholder="Поиск по базе"/>
+                        <input id="full_text" style="display: none" type="text" class="form-control ml-3" placeholder="Поиск по коллекции"/><span id="full_text_error" style="display: none">Ошибка, возможно не создан текстовый индекс.</span>
                     </li>
                     <li class="nav-item ml-md-auto">
                         <a class="nav-link" href="{{ '/contacts'|urlencode }}">Контакты</a>
@@ -29,6 +28,16 @@
                     {% block logout %}
                     {% endblock %}
                 </ul>
+            </div>
+            <div class="col-lg-3 col-sm-0">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3 col-sm-0">
+            </div>
+            <div class="col-lg-6 col-sm-12">
+                <h4>Коллекция: <span id="collection_name"></span></h4>
             </div>
             <div class="col-lg-3 col-sm-0">
             </div>

@@ -18,42 +18,41 @@ class BaseModel:
         pagination = self.make_pagination(count_qs, per_page, page)
         return qs, pagination
 
-    # async def get_by_full_text(self, text, page=1, per_page=9) -> List[Dict[str, Any]]:
-    #     query = {
-    #         '$text': {'$search': text}
-    #     }
-    #     all_qs = self.collection.find(query, {'score': {'$meta': 'textScore'}})
-    #     count_qs = await self.collection.count_documents({})
-    #     qs = await all_qs.skip((page - 1) * per_page).limit(per_page).to_list(length=None)
-
-    #     pagination = self.make_pagination(count_qs, per_page, page)
-    #     return qs, pagination
-
     async def save_item(self, data) -> Tuple[bool, str]:
         result = await self.collection.insert_one(data)
         if result:
-            return True, 'was inserted new document'
-        return False, "document wasn't found and wasn't inserted"
+            return True, 'inserted'
+        return False, 'failed'
 
-    async def update_item(self, data):
+    async def update_item(self, data) -> Tuple[bool, str]:
         item_id = data.pop('item_id')
         if not ObjectId.is_valid(item_id):
-            return False, 'not valid id'
+            return False, 'invalid_id'
 
         _id = ObjectId(item_id)
 
         result = await self.collection.replace_one({'_id': _id}, data)
         if result.raw_result['updatedExisting']:
-            return True, 'document updated'
-        return False, 'item was not found'
+            return True, 'updated'
+        return True, 'inserted'
 
-    async def get_all_documents(self):
+    async def remove_item(self, _id) -> Tuple[bool, str]:
+        if not ObjectId.is_valid(_id):
+            return False, 'invalid_id'
+
+        _id = ObjectId(_id)
+        result = await self.collection.delete_one({'_id': _id})
+        if result:
+            return True, 'removed'
+        return False, 'failed'
+
+    async def get_all_documents(self) -> List[Dict[str, Any]]:
         return await self.collection.find().to_list(length=None)
 
     async def clear_db(self):
         await self.collection.drop()
 
-    def make_pagination(self, count_qs, per_page, page):
+    def make_pagination(self, count_qs, per_page, page) -> Dict[str, Any]:
         has_next = count_qs > per_page * page
         pagination = {
             'has_next': has_next,

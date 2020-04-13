@@ -11,7 +11,7 @@ databases:
         - ibu
         - review
         - others
-        - photos
+        - fortress
        index_fields:
         - name
         - rate

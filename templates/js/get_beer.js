@@ -6,12 +6,6 @@ $(document).ready(function(){
     var full_text = ''
 
 
-    function showError(error){
-        $('#success').html('');
-        $('#error').html(error);
-    }
-
-
     function check_height(e) {
         // Если появляется скролл и его ширина больше клиентской → увеличиваем ширину клиента
         if (this.scrollHeight > this.clientHeight) {
@@ -20,8 +14,15 @@ $(document).ready(function(){
     }
     $('.json_items').map(check_height)
 
+
     function send_data(e) {
-        data = JSON.parse($(`#${this.dataset.id}`).val())
+        _id = this.dataset.id
+        try {
+            data = JSON.parse($(`#${_id}`).val())
+        } catch(e) {
+            $(`#${this.dataset.id}_error_message`).text('Ошибка: неверная структура JSON')
+            return
+        }
         data.item_id = data._id
         delete data._id
         data.collection = current_collection
@@ -32,26 +33,22 @@ $(document).ready(function(){
             type: 'POST',
             data: JSON.stringify(data),
             success: function(data) {
-                console.log(data)
+                answers = {
+                    'inserted': 'Был создан новый документ',
+                    'updated': 'Документ был обновлен',
+                    'failed': 'Документ не был вставлен',
+                    'invalid_id': 'Невалидный _id'
+                }
+                if (data.success){
+                    $(`#${_id}_success_messagea`).text(answers[data.message])
+                } else {
+                    $(`#${_id}_error_message`).text(answers[data.message])
+                }
+                
             }
         })
     }
 
-    function save_new_item() {
-        data = JSON.parse($(`#new_item_json`).val())
-        $.ajax({
-            dataType: 'json',
-            url: '/beerblog/save_item',
-            type: 'POST',
-            data: JSON.stringify(data),
-            success: function(data){
-                draw_items(data.items)
-                draw_fields(data.fields)
-                draw_pagination(data.pagination)
-            }
-        })
-
-    }
 
     function draw_fields(fields){
         $('#fields').empty()
@@ -60,6 +57,7 @@ $(document).ready(function(){
         }
         $('.field').on('click', choose_field)
     }
+
 
     function draw_items(items) {
         $('#items_container').empty()
@@ -72,11 +70,26 @@ $(document).ready(function(){
 
                     <input class="btn btn-primary submit" title="Сохранить" type="button" data-id="${item['_id']}" value="Сохранить">
                     <input class="btn btn-danger delete" title="Удалить" type="button" data-id="${item['_id']}" value="Удалить">
+                        <div id="${item['_id']}_error_message" style="color: red"></div>
+                        <div id="${item['_id']}_success_messagea" style="color: green"></div>
                     <div class="form-group"></div>
                     <hr>
                 </form>`);
         }
     }
+
+
+    function draw_error(error) {
+        $('#items_container').empty()
+        $('#error_message').html(`
+            <form style="width:100%;color: red">
+                <div class="form-group row">
+                    ${error}    
+                </div>
+            </form>`
+        )
+    }
+
 
     function draw_pagination(pag){
         if (pag.page <= 1) {
@@ -100,6 +113,7 @@ $(document).ready(function(){
         $('.json_items').on('input', check_height)
     }
 
+
     function get_collection(e) {
         e.preventDefault()
         current_collection = this.dataset.collection
@@ -116,13 +130,21 @@ $(document).ready(function(){
             processData: false,
             contentType: false,
             success: function(data){
-                draw_items(data.items)
-                draw_fields(data.fields)
-                draw_pagination(data.pagination)
-                $('#full_text').css('display', 'block')
+                if (data.success){
+                    $('#collection_name').text(current_collection)
+                    $('#full_text').css('display', 'block')
+                    $('#database-items').css('display', 'block')
+                    draw_items(data.items)
+                    draw_fields(data.item_fields)
+                    draw_pagination(data.pagination)
+                } else {
+                    draw_error('Ошибка на стороне сервера')
+                    $('#database-items').css('display', 'none')
+                }
             }
         });
     }
+
 
     function choose_field(e) {
         elem = $(`#${this.id}`)
@@ -151,11 +173,17 @@ $(document).ready(function(){
             processData: false,
             contentType: false,
             success: function(data){
-                draw_items(data.items)
-                draw_pagination(data.pagination)
+                if (data.success){
+                    draw_items(data.items)
+                    draw_pagination(data.pagination)
+                } else {
+                    draw_error('Ошибка на стороне сервера')
+                    $('#database-items').css('display', 'none')
+                }
             }
         });
     }
+
 
     function show_hide_collection(e) {
         if ($(`#${this.dataset.database}`).css('display') == 'none') {
@@ -164,6 +192,7 @@ $(document).ready(function(){
             $(`#${this.dataset.database}`).css('display', 'none') 
         }
     }
+
 
     function full_text_search(e) {
         full_text = this.value
@@ -180,23 +209,27 @@ $(document).ready(function(){
             processData: false,
             contentType: false,
             success: function(data){
-                draw_items(data.items)
-                draw_fields(data.fields)
-                draw_pagination(data.pagination)
+                if (data.success){
+                    $('#full_text_error').css('display', 'none')
+                    draw_items(data.items)
+                    draw_fields(data.item_fields)
+                    draw_pagination(data.pagination)
+                } else {
+                    $('#full_text_error').css('display', 'block')
+                }
             }
         });
     }
 
+
     function get_items_by_pagination(e){
         e.preventDefault()
-        current_collection = this.attributes.collection.value
-        current_bd = this.attributes.db.value
         data = {
             'db': current_bd,
             'collection': current_collection,
             'page': this.attributes.page.value,
             'full_text': full_text,
-            'fields': fields,
+            'fields_filter': fields,
         }
         $.ajax({
             dataType: 'json',
@@ -206,15 +239,21 @@ $(document).ready(function(){
             processData: false,
             contentType: false,
             success: function(data){
-                draw_items(data.items)
-                draw_fields(data.fields)
-                draw_pagination(data.pagination)
+                if (data.success){
+                    draw_items(data.items)
+                    draw_fields(data.item_fields)
+                    draw_pagination(data.pagination)
+                } else {
+                    draw_error('Ошибка на стороне сервера')
+                    $('#database-items').css('display', 'none')
+                }
             }
         })
     }
 
+
     $('#full_text').on('input', full_text_search)
-    $('#save_new_item').on('click', save_new_item)
+    $('#save_new_item').on('click', send_data)
     $('.collections').on('click', get_collection)
     $('.databases').on('click', show_hide_collection)
     $('.get_beer_btn').on('click', get_items_by_pagination)
