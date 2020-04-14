@@ -4,7 +4,6 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from beerblog.views import router as beerblog_router
 from auth.views import router as auth_router
 from base.views import router as base_router
 
@@ -15,7 +14,6 @@ templates = Jinja2Templates(directory="templates")
 Router = namedtuple('Router', ['router', 'prefix'])
 
 routes = [
-    Router(beerblog_router, '/beerblog'),
     Router(auth_router, '/auth'),
     Router(base_router, '')
 ]

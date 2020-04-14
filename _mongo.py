@@ -4,7 +4,6 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from fastapi.applications import FastAPI
 
 from _settings import MONGO_DB_BEER_BLOG, MONGO_HOST
-from beerblog.models import Beer
 from base.models import BaseModel
 
 

@@ -71,8 +71,8 @@ async def get_data(request: Request, data: DataIn, response_model=BaseResponse):
 
     for item in items:
         item['_id'] = str(item['_id'])
-    pagination['prev_link'] = request.url_for('get_beer') + f'?page={page-1}'
-    pagination['next_link'] = request.url_for('get_beer') + f'?page={page+1}'
+    pagination['prev_link'] = request.url_for('get_data') + f'?page={page-1}'
+    pagination['next_link'] = request.url_for('get_data') + f'?page={page+1}'
 
     response = {
         'success': True,
