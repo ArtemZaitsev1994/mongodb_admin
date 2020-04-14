@@ -102,23 +102,14 @@ async def save_item(request: Request, item: Dict[str, Any]):
 
 @router.post('/remove_item', name='remove_item', response_model=BaseResponse)
 async def remove_item(request: Request, item: Dict[str, Any]):
-    if item.get('item_id'):
-        success, message = await request.app.mongo[item['db']][item['collection']]\
-            .db.remove_item(item)
-        response = {
-            'success': success,
-            'message': message
-        }
-    else:
-        response = {
-            'success': False,
-            'message': message
-        }
+    success, message = await request.app.mongo[item['db']][item['collection']]\
+        .db.remove_item(item['_id'])
+    response = {
+        'success': success,
+        'message': message
+    }
 
     return response
-
-
-
 
 
 # @router.post('/save_item', name='save_item')

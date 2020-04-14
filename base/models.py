@@ -42,7 +42,7 @@ class BaseModel:
 
         _id = ObjectId(_id)
         result = await self.collection.delete_one({'_id': _id})
-        if result:
+        if result.deleted_count == 1:
             return True, 'removed'
         return False, 'failed'
 

@@ -15,41 +15,6 @@ $(document).ready(function(){
     $('.json_items').map(check_height)
 
 
-    function send_data(e) {
-        _id = this.dataset.id
-        try {
-            data = JSON.parse($(`#${_id}`).val())
-        } catch(e) {
-            $(`#${this.dataset.id}_error_message`).text('Ошибка: неверная структура JSON')
-            return
-        }
-        data.item_id = data._id
-        delete data._id
-        data.collection = current_collection
-        data.db = current_bd
-        $.ajax({
-            dataType: 'json',
-            url: '/save_item',
-            type: 'POST',
-            data: JSON.stringify(data),
-            success: function(data) {
-                answers = {
-                    'inserted': 'Был создан новый документ',
-                    'updated': 'Документ был обновлен',
-                    'failed': 'Документ не был вставлен',
-                    'invalid_id': 'Невалидный _id'
-                }
-                if (data.success){
-                    $(`#${_id}_success_messagea`).text(answers[data.message])
-                } else {
-                    $(`#${_id}_error_message`).text(answers[data.message])
-                }
-                
-            }
-        })
-    }
-
-
     function draw_fields(fields){
         $('#fields').empty()
         for (let li of fields){
@@ -76,6 +41,9 @@ $(document).ready(function(){
                     <hr>
                 </form>`);
         }
+
+        $('.submit').on('click', send_data)
+        $('.delete').on('click', remove_item)
     }
 
 
@@ -108,9 +76,41 @@ $(document).ready(function(){
 
         $('.json_items').map(check_height)
         $('.json_items').on('input', check_height)
+    }
 
-        $('.submit').on('click', send_data)
-        $('.json_items').on('input', check_height)
+
+    function send_data(e) {
+        _id = this.dataset.id
+        try {
+            data = JSON.parse($(`#${_id}`).val())
+        } catch(e) {
+            $(`#${this.dataset.id}_error_message`).text('Ошибка: неверная структура JSON')
+            return
+        }
+        data.item_id = data._id
+        delete data._id
+        data.collection = current_collection
+        data.db = current_bd
+        $.ajax({
+            dataType: 'json',
+            url: '/save_item',
+            type: 'POST',
+            data: JSON.stringify(data),
+            success: function(data) {
+                answers = {
+                    'inserted': 'Был создан новый документ',
+                    'updated': 'Документ был обновлен',
+                    'failed': 'Документ не был вставлен',
+                    'invalid_id': 'Невалидный _id'
+                }
+                if (data.success){
+                    $(`#${_id}_success_messagea`).text(answers[data.message])
+                } else {
+                    $(`#${_id}_error_message`).text(answers[data.message])
+                }
+                
+            }
+        })
     }
 
 
@@ -247,6 +247,35 @@ $(document).ready(function(){
                     draw_error('Ошибка на стороне сервера')
                     $('#database-items').css('display', 'none')
                 }
+            }
+        })
+    }
+
+
+    function remove_item(e){
+        _id = this.dataset.id
+        data = {
+            '_id': this.dataset.id,
+            'db': current_bd,
+            'collection': current_collection
+        }
+        $.ajax({
+            dataType: 'json',
+            url: '/remove_item',
+            type: 'POST',
+            data: JSON.stringify(data),
+            success: function(data) {
+                answers = {
+                    'removed': 'Документ был удален',
+                    'failed': 'Документ не был удален',
+                    'invalid_id': 'Невалидный _id'
+                }
+                if (data.success){
+                    $(`#${_id}_success_messagea`).text(answers[data.message])
+                } else {
+                    $(`#${_id}_error_message`).text(answers[data.message])
+                }
+                
             }
         })
     }
