@@ -20,7 +20,8 @@
                     </li>
 
                     <li>
-                        <input id="full_text" style="display: none" type="text" class="form-control ml-3" placeholder="Поиск по коллекции"/><span id="full_text_error" style="display: none">Ошибка, возможно не создан текстовый индекс.</span>
+                        <input id="full_text" style="display: none" type="text" class="form-control ml-3" placeholder="Поиск по коллекции"/>
+                        <span id="full_text_error" style="display: none">Ошибка, возможно не создан текстовый индекс.</span>
                     </li>
                     <li class="nav-item ml-md-auto">
                         <a class="nav-link" href="{{ '/contacts'|urlencode }}">Контакты</a>
@@ -49,16 +50,8 @@
                         <div class="col-md-1 col-sm-0"></div>
                         <div class="col-md-2 col-sm-0 mt-5">
                             {% block models_type %}
-                                <ul class="nav-item">
-                                {% for db in dbs %}
-                                      <a href="#" class="nav-link databases" data-database="{{db}}">{{ db }}</a>
-                                      <ul id={{db}} style="display: none">
-                                        {% for collection in dbs[db] %}
-                                            <li class="collections" data-db="{{db}}" data-collection="{{collection}}" class="nav-item"><a class="nav-link" href="">{{ collection }}</a></li>
-                                        {% endfor %}
-                                      </ul>
-                                {% endfor %}
-                                    </ul>
+                                <ul class="nav-item" id="databases_list">
+                                </ul>
                             {% endblock %}
                         </div>
                         <div class="col-md-6">

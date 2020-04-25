@@ -1,8 +1,4 @@
 import os
-
-import trafaret as T
-from trafaret_config import read_and_validate
-from fastapi import FastAPI
 from envparse import env
 
 
@@ -17,29 +13,10 @@ if os.path.isfile('.env'):
 
     MONGO_ADMIN_LOGIN = env.str('MONGO_ADMIN_LOGIN')
     MONGO_ADMIN_PASSWORD = env.str('MONGO_ADMIN_PASSWORD')
+
+    JWT_SECRET_KEY = env.str('JWT_SECRET_KEY')
+    JWT_ALGORITHM = env.str('JWT_ALGORITHM')
+    AUTH_SERVER_LINK = env.str('AUTH_SERVER_LINK')
+    TTL_JWT_MINUTES = env.int('TTL_JWT_MINUTES')
 else:
     raise SystemExit('Create an env-file please.!')
-
-
-def setup_app(app: FastAPI):
-    TRAFARET = T.Dict({
-        T.Key('databases'): T.List(
-            T.Dict({
-                'name': T.String(),
-                'collections': T.List(
-                    T.Dict({
-                        'name': T.String(),
-                        'fields': T.List(T.String),
-                        T.Key('index_fields', optional=True): T.List(T.String),
-                    })
-                )
-            })
-        )
-    })
-
-    config = read_and_validate('config.yaml', TRAFARET)
-    app.config = config
-    # BASEDIR = os.path.dirname(os.path.realpath(__file__))
-    # PHOTO_PATH = os.path.join(BASEDIR, 'static/photo/')
-
-    # app.beer_photo_path = os.path.join(PHOTO_PATH, 'beer')

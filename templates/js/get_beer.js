@@ -1,4 +1,59 @@
 $(document).ready(function(){
+    local_token = localStorage.getItem('Authorization')
+    cookie_token = $.cookie('Authorization')
+
+    if (cookie_token === undefined && local_token === null){
+        // Если у нас нет токена нигде, просим сервер ссылку на авторизацию
+        $.ajax({
+            dataType: 'json',
+            url: '/api/get_auth_link',
+            type: 'POST',
+            data: JSON.stringify({}),
+            processData: false,
+            contentType: false,
+            success: function(data){
+                if (data.success){
+                    window.location.replace(data.auth_link);
+                } else {
+                    draw_error('Ошибка на стороне сервера')
+                }
+            }
+        })
+    } else if (cookie_token !== undefined){
+        // если токен пришел в куках 
+        // приходит, если мы залогинились только что -> валидный по определению
+        localStorage.setItem('Authorization', cookie_token)
+        $.removeCookie('Authorization')
+    } else if (local_token !== null){
+        // если токен есть у нас в локал сторедже, проверям валидный ли он до сих пор
+        $.ajax({
+            dataType: 'json',
+            url: '/api/check_token',
+            type: 'POST',
+            data: JSON.stringify({'token': local_token}),
+            processData: false,
+            contentType: false,
+            beforeSend: function(request) {
+                request.setRequestHeader("Authorization", local_token);
+            },
+            success: function(data){
+                if (data.success){
+
+                } else {
+                    window.location.replace(data.auth_link);
+                }
+            }
+        })
+    }
+    token = localStorage.getItem('Authorization')
+    console.log(token)
+
+    function checkAuth(data){
+        if (!data.success && data.invalid_token){
+            console.log(11111111111111111111)
+            window.location.replace(data.auth_link);
+        }
+    }
 
 
     var current_bd, current_collection
@@ -79,6 +134,27 @@ $(document).ready(function(){
     }
 
 
+    function draw_dbs(dbs){
+        $('#databases_list').empty()
+        for (let db of dbs){    
+            $('#databases_list').append(
+                `<a href="#" class="nav-link databases" data-database="${db.name}">${db.name}</a>
+                  <ul id="${db.name}" style="display: none"> </ul>`
+            )
+            for (let c of db.collections){
+                $(`#${db.name}`).append(
+                    `<li class="collections" data-db="${db.name}" data-collection="${c}" class="nav-item">
+                        <a class="nav-link" href="">${c}</a>
+                    </li>`
+                )
+            }
+        }
+
+        $('.databases').on('click', show_hide_collection)
+        $('.collections').on('click', get_collection)
+    }
+
+
     function send_data(e) {
         _id = this.dataset.id
         try {
@@ -93,10 +169,16 @@ $(document).ready(function(){
         data.db = current_bd
         $.ajax({
             dataType: 'json',
-            url: '/save_item',
+            url: '/api/save_item',
             type: 'POST',
             data: JSON.stringify(data),
+            processData: false,
+            contentType: false,
+            beforeSend: function(request) {
+                request.setRequestHeader("Authorization", token);
+            },
             success: function(data) {
+                checkAuth(data)
                 answers = {
                     'inserted': 'Был создан новый документ',
                     'updated': 'Документ был обновлен',
@@ -114,8 +196,39 @@ $(document).ready(function(){
     }
 
 
+    function get_dbs() {
+        $.ajax({
+            dataType: 'json',
+            url: '/api/get_dbs',
+            type: 'POST',
+            data: JSON.stringify({}),
+            processData: false,
+            contentType: false,
+            beforeSend: function(request) {
+                request.setRequestHeader("Authorization", token);
+            },
+            // headers: {
+            //     'Authorization':'Basic xxxxxxxxxxxxx',
+            //     'X-CSRF-TOKEN':'xxxxxxxxxxxxxxxxxxxx',
+            //     'Content-Type':'application/json'
+            // },
+            success: function(data){
+                checkAuth(data)
+                if (data.success){
+                    draw_dbs(data.dbs)
+                } else {
+                    draw_error('Ошибка на стороне сервера')
+                    $('#database-items').css('display', 'none')
+                }
+            }
+        })
+    }
+    get_dbs()
+
+
     function get_collection(e) {
         e.preventDefault()
+        console.log
         current_collection = this.dataset.collection
         current_bd = this.dataset.db
         data = {
@@ -124,12 +237,16 @@ $(document).ready(function(){
         }
         $.ajax({
             dataType: 'json',
-            url: '/get_data',
+            url: '/api/get_data',
             type: 'POST',
             data: JSON.stringify(data),
             processData: false,
             contentType: false,
+            beforeSend: function(request) {
+                request.setRequestHeader("Authorization", token);
+            },
             success: function(data){
+                checkAuth(data)
                 if (data.success){
                     $('#collection_name').text(current_collection)
                     $('#full_text').css('display', 'block')
@@ -167,12 +284,16 @@ $(document).ready(function(){
         }
         $.ajax({
             dataType: 'json',
-            url: '/get_data',
+            url: '/api/get_data',
             type: 'POST',
             data: JSON.stringify(data),
             processData: false,
             contentType: false,
+            beforeSend: function(request) {
+                request.setRequestHeader("Authorization", token);
+            },
             success: function(data){
+                checkAuth(data)
                 if (data.success){
                     draw_items(data.items)
                     draw_pagination(data.pagination)
@@ -203,12 +324,16 @@ $(document).ready(function(){
         }
         $.ajax({
             dataType: 'json',
-            url: '/get_data',
+            url: '/api/get_data',
             type: 'POST',
             data: JSON.stringify(data),
             processData: false,
             contentType: false,
+            beforeSend: function(request) {
+                request.setRequestHeader("Authorization", token);
+            },
             success: function(data){
+                checkAuth(data)
                 if (data.success){
                     $('#full_text_error').css('display', 'none')
                     draw_items(data.items)
@@ -233,12 +358,16 @@ $(document).ready(function(){
         }
         $.ajax({
             dataType: 'json',
-            url: '/get_data',
+            url: '/api/get_data',
             type: 'POST',
             data: JSON.stringify(data),
             processData: false,
             contentType: false,
+            beforeSend: function(request) {
+                request.setRequestHeader("Authorization", token);
+            },
             success: function(data){
+                checkAuth(data)
                 if (data.success){
                     draw_items(data.items)
                     draw_fields(data.item_fields)
@@ -261,10 +390,16 @@ $(document).ready(function(){
         }
         $.ajax({
             dataType: 'json',
-            url: '/remove_item',
+            url: '/api/remove_item',
             type: 'POST',
             data: JSON.stringify(data),
+            processData: false,
+            contentType: false,
+            beforeSend: function(request) {
+                request.setRequestHeader("Authorization", token);
+            },
             success: function(data) {
+                checkAuth(data)
                 answers = {
                     'removed': 'Документ был удален',
                     'failed': 'Документ не был удален',
@@ -283,8 +418,6 @@ $(document).ready(function(){
 
     $('#full_text').on('input', full_text_search)
     $('#save_new_item').on('click', send_data)
-    $('.collections').on('click', get_collection)
-    $('.databases').on('click', show_hide_collection)
     $('.get_beer_btn').on('click', get_items_by_pagination)
 
 })

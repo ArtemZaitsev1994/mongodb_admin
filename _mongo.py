@@ -1,9 +1,8 @@
 from collections import namedtuple
 from motor import motor_asyncio as ma
-from motor.motor_asyncio import AsyncIOMotorDatabase
 from fastapi.applications import FastAPI
 
-from _settings import MONGO_DB_BEER_BLOG, MONGO_HOST
+from _settings import MONGO_HOST
 from base.models import BaseModel
 
 
@@ -16,6 +15,9 @@ class WrongCollectionFormat(Exception):
 
 
 def setup_mongo(app: FastAPI):
+    """
+    Создаем инстанс Монги
+    """
     app.client = ma.AsyncIOMotorClient(MONGO_HOST)
     app.mongo = {}
 

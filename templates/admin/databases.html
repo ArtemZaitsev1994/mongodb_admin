@@ -59,12 +59,10 @@
 
 
     {% block fields %}
-    {% for db in dbs %}
     <div class="mt-5">
         <ul id="fields" class="list-group list-group-flush">
         </ul>
     </div>
-{% endfor %}
 
 {% endblock %}
 
@@ -72,5 +70,6 @@
 {% endblock %}
 
 {% block footer %}
+<script type="text/javascript" src="{{ url_for('js', path='./jquery.cookies.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('js', path='./get_beer.js') }}"></script>
 {% endblock %}
