@@ -1,11 +1,10 @@
-import time
 import jwt
 
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from _settings import JWT_SECRET_KEY, JWT_ALGORITHM, AUTH_SERVER_LINK, TTL_JWT_MINUTES
+from _settings import JWT_SECRET_KEY, JWT_ALGORITHM, AUTH_SERVER_LINK
 
 
 class CheckUserAuthMiddleware(BaseHTTPMiddleware):
@@ -29,13 +28,9 @@ class CheckUserAuthMiddleware(BaseHTTPMiddleware):
             return response
 
         try:
-            payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+            jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
         except (jwt.DecodeError, jwt.ExpiredSignatureError):
             # токен невалидный
             return response
-        else:
-            if payload['created_at'] + (TTL_JWT_MINUTES * 60 * 1000) < int(round(time.time() * 1000)):
-                # токен устарел
-                return response
 
         return await call_next(request)
