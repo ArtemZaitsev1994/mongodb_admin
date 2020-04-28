@@ -23,7 +23,7 @@ async def databases(request: Request):
     return templates.TemplateResponse('admin/databases.html', context)
 
 
-@router.get('/auth/{token}', name='auth', tags=['trusted'])
+@router.get('/auth/{token}', name='auth')
 async def auth(response: Response, request: Request, token: str):
     """Метод для принятия авторизации"""
     try:

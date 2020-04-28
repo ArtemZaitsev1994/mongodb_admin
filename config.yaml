@@ -2,21 +2,43 @@ databases:
 
   - name: beerblog
     collections:
-     - name: bb_beer
+     - name: beer
        fields:
         - name
         - rate
         - manufacturer
-        - gravity
+        - alcohol
         - ibu
         - review
         - others
         - fortress
+        - not_confirmed
+       # поля для полнотекстового поиска, индекс должен быть создан заранее
        index_fields:
         - name
         - rate
         - manufacturer
-        - gravity
+        - alcohol
+        - ibu
+        - review
+        - others
+
+     - name: wine
+       fields:
+        - name
+        - rate
+        - manufacturer
+        - alcohol
+        - ibu
+        - review
+        - others
+        - fortress
+        - not_confirmed
+       index_fields:
+        - name
+        - rate
+        - manufacturer
+        - alcohol
         - ibu
         - review
         - others
