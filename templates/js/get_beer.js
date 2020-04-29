@@ -115,15 +115,16 @@ $(document).ready(function(){
 
 
     function draw_pagination(pag){
+        console.log()
         if (pag.page <= 1) {
-            $('#prev_link').attr('class', 'disabled')
+            $('#prev_link').addClass('disabled')
         } else {
-            $('#prev_link').removeAttr('class', 'disabled')
+            $('#prev_link').removeClass('disabled')
         }
         if (!pag.has_next) {
-            $('#next_link').attr('class', 'disabled')
+            $('#next_link').addClass('disabled')
         } else {
-            $('#next_link').removeAttr('class', 'disabled')
+            $('#next_link').removeClass('disabled')
         }
 
         $('#prev_link').attr('page', pag.prev)
