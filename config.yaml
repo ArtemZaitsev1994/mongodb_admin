@@ -13,7 +13,8 @@ databases:
         - others
         - fortress
         - not_confirmed
-       # поля для полнотекстового поиска, индекс должен быть создан заранее
+       # поля для полнотекстового поиска,
+       # индекс должен быть создан заранее
        index_fields:
         - name
         - rate
@@ -61,3 +62,13 @@ databases:
         - answer
         - complexity
         - category
+
+
+  - name: authorization
+    collections:
+     - name: users
+       fields:
+        - login
+        - password
+        - name
+        - sername
