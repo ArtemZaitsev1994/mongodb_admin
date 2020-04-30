@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
+{% block head %}
+<script type="text/javascript" src="{{ url_for('js', path='./jquery.cookies.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('js', path='./check_token.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('js', path='./get_beer.js') }}" defer></script>
+{% endblock %}
+
 {% block logout %}
   <input class="btn btn-secondary" title="Logout" type="button" id="logout" value="Выйти">
 {% endblock %}
@@ -77,6 +83,4 @@
 {% endblock %}
 
 {% block footer %}
-<script type="text/javascript" src="{{ url_for('js', path='./jquery.cookies.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('js', path='./get_beer.js') }}"></script>
 {% endblock %}
