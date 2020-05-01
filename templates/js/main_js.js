@@ -3,7 +3,6 @@ $(document).ready(function(){
 
     function checkAuth(data){
         if (!data.success && data.invalid_token){
-            console.log(11111111111111111111)
             window.location.replace(data.auth_link);
         }
     }
@@ -68,7 +67,7 @@ $(document).ready(function(){
 
 
     function draw_pagination(pag){
-        console.log()
+        console.log(pag)
         if (pag.page <= 1) {
             $('#prev_link').addClass('disabled')
         } else {
@@ -105,7 +104,7 @@ $(document).ready(function(){
         }
 
         $('.databases').on('click', show_hide_collection)
-        $('.collections').on('click', get_collection)
+        $('.collections').on('click', get_collection_items)
     }
 
 
@@ -161,11 +160,6 @@ $(document).ready(function(){
             beforeSend: function(request) {
                 request.setRequestHeader("Authorization", token);
             },
-            // headers: {
-            //     'Authorization':'Basic xxxxxxxxxxxxx',
-            //     'X-CSRF-TOKEN':'xxxxxxxxxxxxxxxxxxxx',
-            //     'Content-Type':'application/json'
-            // },
             success: function(data){
                 checkAuth(data)
                 if (data.success){
@@ -180,9 +174,8 @@ $(document).ready(function(){
     get_dbs()
 
 
-    function get_collection(e) {
+    function get_collection_items(e) {
         e.preventDefault()
-        console.log
         current_collection = this.dataset.collection
         current_bd = this.dataset.db
         data = {

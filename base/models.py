@@ -12,7 +12,7 @@ class BaseModel:
 
     async def get_all(self, query, page=1, per_page=9) -> List[Dict[str, Any]]:
         all_qs = self.collection.find(query)
-        count_qs = await self.collection.count_documents({})
+        count_qs = await self.collection.count_documents(query)
         qs = await all_qs.skip((page - 1) * per_page).limit(per_page).to_list(length=None)
 
         pagination = self.make_pagination(count_qs, per_page, page)

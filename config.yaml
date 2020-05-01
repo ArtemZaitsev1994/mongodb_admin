@@ -44,6 +44,21 @@ databases:
         - review
         - others
 
+     - name: vodka
+       fields:
+        - name
+        - rate
+        - manufacturer
+        - review
+        - others
+        - not_confirmed
+       index_fields:
+        - name
+        - rate
+        - manufacturer
+        - review
+        - others
+
 
   - name: quiz
     collections:
