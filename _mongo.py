@@ -2,7 +2,6 @@ from collections import namedtuple
 from motor import motor_asyncio as ma
 from fastapi.applications import FastAPI
 
-from _settings import MONGO_HOST
 from base.models import BaseModel
 
 

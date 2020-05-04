@@ -61,24 +61,24 @@ databases:
         - others
 
 
-  - name: quiz
-    address: mongodb://mongod_quiz:27017
-    collections:
-     - name: admin
-       fields:
-        - login
-        - password
-     - name: quiz_questions
-       fields:
-        - text
-        - answer
-        - complexity
-        - category
-       index_fields:
-        - text
-        - answer
-        - complexity
-        - category
+  # - name: quiz
+  #   address: mongodb://mongod_quiz:27017
+  #   collections:
+  #    - name: admin
+  #      fields:
+  #       - login
+  #       - password
+  #    - name: quiz_questions
+  #      fields:
+  #       - text
+  #       - answer
+  #       - complexity
+  #       - category
+  #      index_fields:
+  #       - text
+  #       - answer
+  #       - complexity
+  #       - category
 
 
   - name: authorization
