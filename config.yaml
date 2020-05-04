@@ -1,6 +1,7 @@
 databases:
 
   - name: beerblog
+    address: mongodb://mongodb_beerblog:27017
     collections:
      - name: beer
        fields:
@@ -61,6 +62,7 @@ databases:
 
 
   - name: quiz
+    address: mongodb://mongod_quiz:27017
     collections:
      - name: admin
        fields:
@@ -80,6 +82,7 @@ databases:
 
 
   - name: authorization
+    address: mongodb://mongodb_auth:27017
     collections:
      - name: users
        fields:

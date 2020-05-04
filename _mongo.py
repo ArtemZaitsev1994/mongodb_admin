@@ -18,10 +18,11 @@ def setup_mongo(app: FastAPI):
     """
     Создаем инстанс Монги
     """
-    app.client = ma.AsyncIOMotorClient(MONGO_HOST)
+    # app.client = ma.AsyncIOMotorClient(MONGO_HOST)
     app.mongo = {}
 
     for db in app.config['databases']:
+        client = ma.AsyncIOMotorClient(db['address'])
         app.mongo[db['name']] = {}
 
         for collection in db['collections']:
@@ -30,7 +31,7 @@ def setup_mongo(app: FastAPI):
                 if len(list(set(collection['index_fields']) - set(collection['fields']))) > 0:
                     raise WrongCollectionFormat('"index_fields" got an extra fields not included in "fields"')
 
-            db_instance = app.client[db['name']]
+            db_instance = client[db['name']]
             collection_instance = db_instance[collection['name']]
 
             app.mongo[db['name']][collection['name']] = MongoInstance(

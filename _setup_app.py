@@ -15,6 +15,7 @@ def setup_app(app: FastAPI):
         T.Key('databases'): T.List(
             T.Dict({
                 'name': T.String(),
+                'address': T.String(),
                 'collections': T.List(
                     T.Dict({
                         'name': T.String(),
