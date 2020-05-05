@@ -7,7 +7,6 @@ from starlette.responses import RedirectResponse
 
 from base.views import router as base_router
 from base.api import router as api_router
-from auth.views import router as auth_router
 
 
 templates = Jinja2Templates(directory="templates")
@@ -17,7 +16,6 @@ Router = namedtuple('Router', ['router', 'prefix'])
 
 routes = [
     Router(base_router, ''),
-    Router(auth_router, '/auth'),
     Router(api_router, '/api'),
 ]
 

@@ -1,12 +1,10 @@
-import time
 from typing import Dict, Any, List
 
-import jwt
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 from pymongo import errors
 
-from _settings import JWT_SECRET_KEY, JWT_ALGORITHM, AUTH_SERVER_LINK, TTL_JWT_MINUTES
+from _settings import AUTH_SERVER_LINK
 
 
 router = APIRouter()
