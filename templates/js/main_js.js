@@ -67,7 +67,6 @@ $(document).ready(function(){
 
 
     function draw_pagination(pag){
-        console.log(pag)
         if (pag.page <= 1) {
             $('#prev_link').addClass('disabled')
         } else {

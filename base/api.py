@@ -38,7 +38,7 @@ async def get_data(request: Request, data: DataIn, response_model=BaseResponse):
         query = dict(
             zip(
                 data.fields_filter, [
-                    {"$nin": ['', -1, None], "$exists": True}
+                    {"$nin": ['', -1, None, False], "$exists": True}
                     for x
                     in data.fields_filter
                 ]
