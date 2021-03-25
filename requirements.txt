@@ -13,7 +13,7 @@ passlib==1.7.2
 pydantic==1.4
 PyJWT==1.7.1
 pymongo==3.10.1
-PyYAML==5.3.1
+PyYAML==5.4
 starlette==0.13.2
 trafaret==2.0.2
 trafaret-config==2.0.2
